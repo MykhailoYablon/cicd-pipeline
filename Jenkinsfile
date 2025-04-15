@@ -4,6 +4,7 @@ pipeline {
         environment {
             NODE_ENV = 'production'
             IMAGE_TAG = "${env.BRANCH_NAME == 'main' ? 'nodemain:v1.0' : 'nodedev:v1.0'}"
+            IMAGE_NAME = 'ironcrow/devops-cicd'
             DOCKERHUB_CREDENTIALS = credentials('docker-hub-creds')
         }
 
@@ -36,8 +37,6 @@ pipeline {
                     script {
                         sh '''
                             echo "Pushing images to repo"
-                            echo "$DOCKERHUB_CREDENTIALS_USR"
-                            echo "$DOCKERHUB_CREDENTIALS_PSW"
                             docker build -t ${IMAGE_TAG} .
 
                         '''
@@ -48,8 +47,6 @@ pipeline {
             stage('Push Image to Docker Hub') {
                 steps {
                     script {
-                        def IMAGE_NAME = 'ironcrow/devops-cicd'
-
                         sh '''
                         echo "Pushing images to repo"
                         echo "$DOCKERHUB_CREDENTIALS_PSW" | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
