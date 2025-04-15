@@ -43,9 +43,10 @@ pipeline {
                 steps {
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-creds')]) {
                         script {
-                            IMAGE_NAME = (env.BRANCH_NAME == 'main') ? 'ironcrow/nodemain:v1.0' : 'ironcrow/nodedev:v1.0'
+                            IMAGE_NAME = 'ironcrow/devops-cicd'
 
                             sh '''
+                            echo "Pushing images to repo"
                             echo "$DOCKERHUB_CREDENTIALS_PSW" | docker login -u "$DOCKERHUB_CREDENTIALS_USR" --password-stdin
                             docker tag ${IMAGE_TAG} ${IMAGE_NAME}
                             docker push ${IMAGE_NAME}
