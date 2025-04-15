@@ -20,7 +20,7 @@ pipeline {
                 }
             }
 
-            stage('Install Dependencies') {
+            stage('Tool Install') {
                 steps {
                     sh 'npm install'
                 }
@@ -32,7 +32,7 @@ pipeline {
                 }
             }
 
-            stage('Build Docker Image') {
+            stage('Docker build') {
                 steps {
                     script {
                         sh "docker build -t ${IMAGE_TAG} ."
@@ -40,22 +40,7 @@ pipeline {
                 }
             }
 
-            stage('Clean Old Containers') {
-                steps {
-                    script {
-                        sh '''
-                        OLD_CONTAINER=$(docker ps -q --filter "ancestor=${IMAGE_TAG}")
-                        if [ ! -z "$OLD_CONTAINER" ]; then
-                            echo "Stopping and removing existing container(s)..."
-                            docker stop $OLD_CONTAINER || true
-                            docker rm $OLD_CONTAINER || true
-                        fi
-                        '''
-                    }
-                }
-            }
-
-            stage('Run Application in Docker') {
+            stage('Deploy') {
                 steps {
                     sh '''
                     echo "Running app on port ${PORT}..."
