@@ -4,7 +4,7 @@ pipeline {
         environment {
             NODE_ENV = 'production'
             IMAGE_TAG = "${env.BRANCH_NAME == 'main' ? 'nodemain:v1.0' : 'nodedev:v1.0'}"
-            IMAGE_NAME = 'ironcrow/devops-cicd'
+            IMAGE_NAME = "${env.BRANCH_NAME == 'main' ? 'ironcrow/nodemain:v1.0' : 'ironcrow/nodedev:v1.0'}"
             DOCKERHUB_CREDENTIALS = credentials('docker-hub-creds')
         }
 
