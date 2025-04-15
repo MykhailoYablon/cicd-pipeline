@@ -4,7 +4,6 @@ pipeline {
         environment {
             NODE_ENV = 'production'
             IMAGE_TAG = "${env.BRANCH_NAME == 'main' ? 'nodemain:v1.0' : 'nodedev:v1.0'}"
-            DOCKERHUB_CREDENTIALS = credentials('docker-hub-creds')
         }
 
         tools {
