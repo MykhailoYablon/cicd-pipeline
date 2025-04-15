@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent docker
 
         environment {
             NODE_ENV = 'production'
@@ -43,17 +43,19 @@ pipeline {
             stage('Deploy') {
                 steps {
                     sh '''
-                                OLD_CONTAINER=$(docker ps -q --filter "ancestor=${IMAGE_TAG}")
-                                if [ ! -z "$OLD_CONTAINER" ]; then
-                                    echo "Stopping and removing existing container(s)..."
-                                    docker stop $OLD_CONTAINER || true
-                                    docker rm $OLD_CONTAINER || true
-                                fi
+                        echo "Looking for containers running on port ${PORT}..."
+                        CONTAINER_ID=$(docker ps --filter "publish=${PORT}" --format "{{.ID}}")
+                        if [ ! -z "$CONTAINER_ID" ]; then
+                            echo "Stopping and removing container using port ${PORT}..."
+                            docker stop $CONTAINER_ID || true
+                            docker rm $CONTAINER_ID || true
+                        else
+                            echo "No container found using port ${PORT}"
+                        fi
                     '''
                     sh '''
-
-                    echo "Running app on port ${PORT}..."
-                    docker run -d --expose ${PORT} -p ${PORT}:${APP_PORT} ${IMAGE_TAG}
+                        echo "Running app on port ${PORT}..."
+                        docker run -d --expose ${PORT} -p ${PORT}:${APP_PORT} ${IMAGE_TAG}
                     '''
                 }
             }
