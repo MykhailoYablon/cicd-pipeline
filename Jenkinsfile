@@ -32,6 +32,12 @@ pipeline {
                 }
             }
 
+            stage('Lint Dockerfile with Hadolint') {
+                steps {
+                    sh 'hadolint Dockerfile'
+                }
+            }
+
             stage('Docker build') {
                 steps {
                     script {
@@ -40,6 +46,20 @@ pipeline {
                             docker build -t ${IMAGE_TAG} .
 
                         '''
+                    }
+                }
+            }
+
+            stage('Scan Docker Image with Trivy') {
+                steps {
+                    script {
+                        def imageName = (env.BRANCH_NAME == 'main') ? 'nodemain:v1.0' : 'nodedev:v1.0'
+                        sh """
+                        docker run --rm \
+                          -v /var/run/docker.sock:/var/run/docker.sock \
+                          aquasec/trivy:latest image \
+                          --severity CRITICAL,HIGH ${imageName}
+                        """
                     }
                 }
             }
