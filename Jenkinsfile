@@ -48,7 +48,7 @@ pipeline {
             stage('Push Image to Docker Hub') {
                 steps {
                     script {
-                        IMAGE_NAME = 'ironcrow/devops-cicd'
+                        def IMAGE_NAME = 'ironcrow/devops-cicd'
 
                         sh '''
                         echo "Pushing images to repo"
