@@ -53,6 +53,7 @@ pipeline {
                         }
                     }
                 }
+            }
 
             stage('Trigger Deployment Pipeline') {
                 steps {
