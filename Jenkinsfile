@@ -9,7 +9,7 @@ pipeline {
         }
 
         tools {
-            nodejs 'NodeJS 18.x' // Match your global tool configuration name
+            nodejs 'NodeJs Installation'
         }
 
         stages {
