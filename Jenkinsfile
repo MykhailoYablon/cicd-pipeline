@@ -26,5 +26,42 @@ pipeline {
                 }
             }
 
+            stage('Run Tests') {
+                steps {
+                    sh 'npm test'
+                }
+            }
+
+            stage('Build Docker Image') {
+                steps {
+                    script {
+                        sh "docker build -t ${IMAGE_TAG} ."
+                    }
+                }
+            }
+
+            stage('Clean Old Containers') {
+                steps {
+                    script {
+                        sh '''
+                        OLD_CONTAINER=$(docker ps -q --filter "ancestor=${IMAGE_TAG}")
+                        if [ ! -z "$OLD_CONTAINER" ]; then
+                            echo "Stopping and removing existing container(s)..."
+                            docker stop $OLD_CONTAINER || true
+                            docker rm $OLD_CONTAINER || true
+                        fi
+                        '''
+                    }
+                }
+            }
+
+            stage('Run Application in Docker') {
+                steps {
+                    sh '''
+                    echo "Running app on port ${PORT}..."
+                    docker run -d --expose ${PORT} -p ${PORT}:${APP_PORT} ${IMAGE_TAG}
+                    '''
+                }
+            }
         }
 }
