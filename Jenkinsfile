@@ -49,7 +49,6 @@ pipeline {
                             echo "$DOCKERHUB_CREDENTIALS_PSW" | docker login -u "$DOCKERHUB_CREDENTIALS_USR" --password-stdin
                             docker tag ${IMAGE_TAG} ${IMAGE_NAME}
                             docker push ${IMAGE_NAME}
-                            docker logout
                             '''
                         }
                     }
@@ -65,4 +64,10 @@ pipeline {
                 }
             }
         }
+
+    post {
+        always {
+            sh 'docker logout'
+        }
+    }
 }
