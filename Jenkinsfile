@@ -34,7 +34,13 @@ pipeline {
             stage('Docker build') {
                 steps {
                     script {
-                        sh "docker build -t ${IMAGE_TAG} ."
+                        sh '''
+                            echo "Pushing images to repo"
+                            echo "$DOCKERHUB_CREDENTIALS_USR"
+                            echo "$DOCKERHUB_CREDENTIALS_PSW"
+                            docker build -t ${IMAGE_TAG} .
+
+                        '''
                     }
                 }
             }
